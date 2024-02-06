@@ -2,7 +2,9 @@
 use std::fs::File;
 // use std::io::ErrorKind;
 
-fn main() {
+use std::error::Error;
+
+fn main() -> Result<(), Box<dyn Error>> {
     // let greeting_file_result = File::open("hello.txt");
 
     // let greeting_file = match greeting_file_result {
@@ -43,6 +45,18 @@ fn main() {
 
     let username = read_username_from_file().expect("Error reading username from file");
     println!("The username is: {}", username);
+
+    let username2 = read_username_from_file_short().expect("Error reading username2 from file");
+    println!("The username2 is: {}", username2);
+
+    let username3 = read_username_from_file_shorter().expect("Error reading username3 from file");
+    println!("The username3 is: {}", username3);
+
+    let username4 = read_username_from_file_shortest().expect("Error reading username4 from file");
+    println!("The username4 is: {}", username4);
+
+    let greeting_file = File::open("hello.txt")?;
+    Ok(())
 }
 
 use std::io::{self, Read};
@@ -59,4 +73,22 @@ fn read_username_from_file() -> Result<String, io::Error> {
         Ok(_) => Ok(username),
         Err(e) => Err(e),
     }
+}
+
+fn read_username_from_file_short() -> Result<String, io::Error> {
+    let mut username_file = File::open("hello.txt")?;
+    let mut username = String::new();
+
+    username_file.read_to_string(&mut username)?;
+    Ok(username)
+}
+
+fn read_username_from_file_shorter() -> Result<String, io::Error> {
+    let mut username = String::new();
+    File::open("hello.txt")?.read_to_string(&mut username)?;
+    Ok(username)
+}
+
+fn read_username_from_file_shortest() -> Result<String, io::Error> {
+    std::fs::read_to_string("hello.txt")
 }
