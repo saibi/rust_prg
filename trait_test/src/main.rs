@@ -1,6 +1,6 @@
 mod aggregator;
 
-use aggregator::{NewsArticle, Summary, Tweet};
+use aggregator::*;
 
 fn main() {
     let tweet = Tweet {
@@ -22,4 +22,14 @@ fn main() {
 
     let number = 5;
     println!("Number: {}", number.summarize());
+
+    notify(&number);
+    notify(&tweet);
+
+    notify2(&number);
+
+    notify3(&number);
+    // notify3(&article); // this will not compile because NewsArticle does not implement Display
+
+    notify4(&tweet, &number)
 }
