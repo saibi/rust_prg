@@ -1,6 +1,5 @@
-workspace = { members = [ "custom_types","formatting", "primitives"] }
 [package]
-name = "playground"
+name = "custom_types"
 version = "0.1.0"
 edition = "2021"
 
