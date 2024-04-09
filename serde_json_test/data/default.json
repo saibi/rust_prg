@@ -1,0 +1,117 @@
+{
+    "color_alias": {
+        "red": "FF0000",
+        "green": "00FF00",
+        "blue": "0000FF",
+        "black": "000000",
+        "white": "FFFFFF",
+        "yellow": "FFFF00",
+        "cyan": "00FFFF",
+        "magenta": "FF00FF",
+        "gray": "808080",
+        "grey": "808080",
+        "maroon": "800000",
+        "olive": "808000",
+        "navy": "000080",
+        "purple": "800080",
+        "teal": "008080",
+        "silver": "C0C0C0",
+        "lime": "00FF00",
+        "aqua": "00FFFF",
+        "fuchsia": "FF00FF",
+        "orange": "FFA500",
+        "pink": "FFC0CB",
+        "brown": "A52A2A"
+    },
+    "define": {
+        "BLINK_ON_WAIT_MS": 300,
+        "BLINK_OFF_WAIT_MS": 200,
+        "FADE_DURATION_MS": 1000
+    },
+    "default": {
+        "col": "white",
+        "bri": 31,
+        "blink_cnt": 3,
+        "blink_on_dur": "BLINK_ON_WAIT_MS",
+        "blink_off_dur": "BLINK_OFF_WAIT_MS",
+        "fadein_dur": "FADE_DURATION_MS",
+        "fadeout_dur": "FADE_DURATION_MS",
+        "grad_dur": "FADE_DURATION_MS"
+    },
+    "blink_preset": [
+        {
+            "cnt": 3,
+            "on": {
+                "dur": "BLINK_ON_WAIT_MS",
+                "col": "red",
+                "bri": 31
+            },
+            "off": {
+                "dur": "BLINK_OFF_WAIT_MS",
+                "col": "black",
+                "bri": 0
+            }
+        },
+        {
+            "cnt": 3,
+            "on": {
+                "dur": "BLINK_ON_WAIT_MS",
+                "col": "green",
+                "bri": 31
+            },
+            "off": {
+                "dur": "BLINK_OFF_WAIT_MS",
+                "col": "black",
+                "bri": 0
+            }
+        }
+    ],
+    "fadeinout_preset": [
+        {
+            "in": {
+                "dur": "FADE_DURATION_MS",
+                "col": "blue",
+                "bri": 31
+            },
+            "out": {
+                "dur": "FADE_DURATION_MS",
+                "col": 0,
+                "bri": 0
+            }
+        },
+        {
+            "in": {
+                "dur": "FADE_DURATION_MS",
+                "col": "cyan",
+                "bri": 31
+            },
+            "out": {
+                "dur": "FADE_DURATION_MS",
+                "col": 0,
+                "bri": 0
+            }
+        }
+    ],
+    "grad_preset": [
+        {
+            "dur": "FADE_DURATION_MS",
+            "start_bri": 0,
+            "end_bri": 31,
+            "colors": [
+                "black",
+                "yellow",
+                "white"
+            ]
+        },
+        {
+            "dur": "FADE_DURATION_MS",
+            "start_bri": 0,
+            "end_bri": 31,
+            "colors": [
+                "gray",
+                "brown",
+                "white"
+            ]
+        }
+    ]
+}
