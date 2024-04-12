@@ -28,7 +28,7 @@
         "BLINK_OFF_WAIT_MS": 200,
         "FADE_DURATION_MS": 1000
     },
-    "default": {
+    "parameter": {
         "col": "white",
         "bri": 31,
         "blink_cnt": 3,
@@ -37,6 +37,62 @@
         "fadein_dur": "FADE_DURATION_MS",
         "fadeout_dur": "FADE_DURATION_MS",
         "grad_dur": "FADE_DURATION_MS"
+    },
+    "preset": {
+        "blink": [
+            {
+                "cnt": 3,
+                "on": {
+                    "dur": "BLINK_ON_WAIT_MS",
+                    "col": "red",
+                    "bri": 31
+                },
+                "off": {
+                    "dur": "BLINK_OFF_WAIT_MS",
+                    "col": "black",
+                    "bri": 0
+                }
+            },
+            {
+                "cnt": 3,
+                "on": {
+                    "dur": "BLINK_ON_WAIT_MS",
+                    "col": "green",
+                    "bri": 31
+                },
+                "off": {
+                    "dur": "BLINK_OFF_WAIT_MS",
+                    "col": "black",
+                    "bri": 0
+                }
+            }
+        ],
+        "fade": [
+            {
+                "in": {
+                    "dur": "FADE_DURATION_MS",
+                    "col": "blue",
+                    "bri": 31
+                },
+                "out": {
+                    "dur": "FADE_DURATION_MS",
+                    "col": 0,
+                    "bri": 0
+                }
+            },
+            {
+                "in": {
+                    "dur": "FADE_DURATION_MS",
+                    "col": "cyan",
+                    "bri": 31
+                },
+                "out": {
+                    "dur": "FADE_DURATION_MS",
+                    "col": 0,
+                    "bri": 0
+                }
+            }
+        ]
     },
     "blink_preset": [
         {
