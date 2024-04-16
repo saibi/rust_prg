@@ -92,6 +92,28 @@
                     "bri": 0
                 }
             }
+        ],
+        "grad": [
+            {
+                "dur": "FADE_DURATION_MS",
+                "start_bri": 0,
+                "end_bri": 31,
+                "colors": [
+                    "black",
+                    "yellow",
+                    "white"
+                ]
+            },
+            {
+                "dur": "FADE_DURATION_MS",
+                "start_bri": 0,
+                "end_bri": 31,
+                "colors": [
+                    "gray",
+                    "brown",
+                    "white"
+                ]
+            }
         ]
     },
     "blink_preset": [
