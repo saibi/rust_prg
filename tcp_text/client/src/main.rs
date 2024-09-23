@@ -1,20 +1,44 @@
-use std::io::{self, Read, Write};
+use std::io::{self, BufRead, BufReader, Write};
 use std::net::TcpStream;
+use std::sync::mpsc::{self, Receiver, Sender};
+use std::thread;
 
-fn main() {
-    let mut stream = TcpStream::connect("127.0.0.1:7879").unwrap();
+fn main() -> io::Result<()> {
+    let mut stream = TcpStream::connect("127.0.0.1:7879")?;
     println!("Connected to server");
 
-    loop {
-        let mut buffer = String::new();
-        println!("Enter message:");
-        io::stdin().read_line(&mut buffer).unwrap();
+    let (tx, rx): (Sender<String>, Receiver<String>) = mpsc::channel();
+    let tx_clone = tx.clone();
 
-        stream.write_all(buffer.as_bytes()).unwrap();
+    // Spawn a thread to handle user input
+    thread::spawn(move || {
+        let stdin = io::stdin();
+        for line in stdin.lock().lines() {
+            if let Ok(input) = line {
+                tx_clone.send(input).unwrap();
+            }
+        }
+    });
 
-        let mut buffer = [0; 1024];
-        let bytes_read = stream.read(&mut buffer).unwrap();
-        let message = String::from_utf8_lossy(&buffer[..bytes_read]);
-        println!("Received: {}", message);
+    // Spawn a thread to handle incoming messages
+    let mut reader = BufReader::new(stream.try_clone()?);
+    thread::spawn(move || {
+        loop {
+            let mut buffer = String::new();
+            match reader.read_line(&mut buffer) {
+                Ok(0) => break, // Connection closed
+                Ok(_) => print!("Received: {}", buffer),
+                Err(_) => break,
+            }
+        }
+    });
+
+    // Main loop to handle outgoing messages
+    for message in rx {
+        stream.write_all(message.as_bytes())?;
+        stream.write_all(b"\n")?;
+        stream.flush()?;
     }
+
+    Ok(())
 }
