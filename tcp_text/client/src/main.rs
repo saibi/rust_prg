@@ -1,4 +1,4 @@
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{self, Read, Write};
 use std::net::TcpStream;
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
@@ -12,22 +12,26 @@ fn main() -> io::Result<()> {
 
     // Spawn a thread to handle user input
     thread::spawn(move || {
-        let stdin = io::stdin();
-        for line in stdin.lock().lines() {
-            if let Ok(input) = line {
-                tx_clone.send(input).unwrap();
+        let mut buffer = String::new();
+        loop {
+            if io::stdin().read_line(&mut buffer).is_ok() {
+                tx_clone.send(buffer.clone()).unwrap();
+                buffer.clear();
             }
         }
     });
 
     // Spawn a thread to handle incoming messages
-    let mut reader = BufReader::new(stream.try_clone()?);
+    let mut reader = stream.try_clone()?;
     thread::spawn(move || {
+        let mut buffer = [0; 1024];
         loop {
-            let mut buffer = String::new();
-            match reader.read_line(&mut buffer) {
+            match reader.read(&mut buffer) {
                 Ok(0) => break, // Connection closed
-                Ok(_) => print!("Received: {}", buffer),
+                Ok(n) => {
+                    print!("{}", String::from_utf8_lossy(&buffer[..n]));
+                    io::stdout().flush().unwrap();
+                }
                 Err(_) => break,
             }
         }
@@ -36,7 +40,6 @@ fn main() -> io::Result<()> {
     // Main loop to handle outgoing messages
     for message in rx {
         stream.write_all(message.as_bytes())?;
-        stream.write_all(b"\n")?;
         stream.flush()?;
     }
 

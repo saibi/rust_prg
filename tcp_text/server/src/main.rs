@@ -1,18 +1,17 @@
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
 
-fn handle_client(mut stream: TcpStream, tx: Sender<String>) {
-    let mut reader = BufReader::new(stream.try_clone().unwrap());
-
+fn handle_client(mut stream: TcpStream, tx: Sender<Vec<u8>>) {
+    let mut buffer = [0; 1024];
     loop {
-        let mut buffer = String::new();
-        match reader.read_line(&mut buffer) {
+        match stream.read(&mut buffer) {
             Ok(0) => break, // Connection closed
-            Ok(_) => {
-                print!("Received: {}", buffer);
-                tx.send(buffer).unwrap();
+            Ok(n) => {
+                print!("Received: {}", String::from_utf8_lossy(&buffer[..n]));
+                io::stdout().flush().unwrap();
+                tx.send(buffer[..n].to_vec()).unwrap();
             }
             Err(_) => break,
         }
@@ -23,15 +22,16 @@ fn main() -> io::Result<()> {
     let listener = TcpListener::bind("127.0.0.1:7879")?;
     println!("Server listening on port 8080");
 
-    let (tx, rx): (Sender<String>, Receiver<String>) = mpsc::channel();
+    let (tx, rx): (Sender<Vec<u8>>, Receiver<Vec<u8>>) = mpsc::channel();
     let tx_clone = tx.clone();
 
     // Spawn a thread to handle user input
     thread::spawn(move || {
-        let stdin = io::stdin();
-        for line in stdin.lock().lines() {
-            if let Ok(input) = line {
-                tx_clone.send(input).unwrap();
+        let mut buffer = String::new();
+        loop {
+            if io::stdin().read_line(&mut buffer).is_ok() {
+                tx_clone.send(buffer.as_bytes().to_vec()).unwrap();
+                buffer.clear();
             }
         }
     });
@@ -47,7 +47,7 @@ fn main() -> io::Result<()> {
 
     // Main loop to handle messages
     for received in rx {
-        stream.write_all(received.as_bytes())?;
+        stream.write_all(&received)?;
         stream.flush()?;
     }
 
