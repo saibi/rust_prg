@@ -5,7 +5,7 @@ use clap::Parser;
 pub struct Args {
     /// Server Address
     #[arg(short = 'a', long, default_value = "10.82.79.2:8274")]
-    pub address: String,
+    pub addr: String,
 
     /// log file path
     #[arg(short = 'd', long, default_value = "/tmp/client.log")]
