@@ -20,6 +20,6 @@ pub struct Args {
     pub log_stderr: bool,
 
     /// fs test file path
-    #[arg(short = 'f', long, default_value = "/tmp/DMB_BD.bin")]
+    #[arg(short = 'f', long, default_value = "/tmp/DMC_BD.bin")]
     pub test_file: String,
 }

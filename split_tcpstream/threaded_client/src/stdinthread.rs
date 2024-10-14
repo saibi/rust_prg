@@ -27,7 +27,7 @@ impl StdinThread {
         let mut input = String::new();
         loop {
             if io::stdin().read_line(&mut input).is_ok() {
-                tx.send(input.clone()).unwrap();
+                tx.send(input.trim_end().to_string()).unwrap();
                 input.clear();
             }
         }
