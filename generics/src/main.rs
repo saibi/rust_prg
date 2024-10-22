@@ -75,6 +75,9 @@ fn main() {
 
     // print_debug(&triangle);
     // println!("Area: {}", area(&triangle));
+
+    let string = "words";
+    compare_prints(&string);
 }
 
 trait Red {}
@@ -86,4 +89,14 @@ where
     T: Red,
 {
     "red"
+}
+
+use std::fmt::Display;
+
+fn compare_prints<T>(t: &T)
+where
+    T: Display + Debug,
+{
+    println!("Debug: '{:?}'", t);
+    println!("Display: '{}'", t);
 }
