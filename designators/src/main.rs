@@ -69,4 +69,8 @@ fn main() {
     calculate! {
         eval 1 + 2
     }
+
+    calculate! {
+        eval (1 + 2) * (3 / 4)
+    }
 }
