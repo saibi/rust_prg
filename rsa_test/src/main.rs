@@ -33,5 +33,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("암호화된 메시지: {:?}", encrypted);
     println!("복호화된 메시지: {}", String::from_utf8_lossy(&decrypted));
 
+    sig_test();
     Ok(())
+}
+
+use rsa::pkcs1v15::{SigningKey, VerifyingKey};
+use rsa::sha2::{Digest, Sha256};
+use rsa::signature::{Keypair, RandomizedSigner, SignatureEncoding, Verifier};
+
+fn sig_test() {
+    let mut rng = rand::thread_rng();
+
+    let bits = 2048;
+    let private_key = RsaPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
+    let signing_key = SigningKey::<Sha256>::new(private_key);
+    let verifying_key = signing_key.verifying_key();
+
+    // Sign
+    let data = b"hello world";
+    let signature = signing_key.sign_with_rng(&mut rng, data);
+    assert_ne!(signature.to_bytes().as_ref(), data.as_slice());
+    println!("Signature: {:?}", signature);
+
+    // Verify
+    verifying_key
+        .verify(data, &signature)
+        .expect("failed to verify");
 }
