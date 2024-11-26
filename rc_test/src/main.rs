@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{rc::Rc, sync::Arc, thread, time::Duration};
 
 fn main() {
     let rc_example = "Rc example".to_string();
@@ -30,4 +30,25 @@ fn main() {
     // And when `rc_a` is dropped, `rc_examples` is dropped together
     // println!("rc_examples: {}", rc_example);
     // TODO ^ Try uncommenting this line
+
+    arc_test();
+}
+
+fn arc_test() {
+    let apple = "the same apple";
+    let arc_apple = Arc::new(apple);
+
+    for _ in 0..10 {
+        let apple = Arc::clone(&arc_apple);
+
+        thread::spawn(move || {
+            println!("{:?}", apple);
+        });
+        println!(
+            "Reference Count of arc_apple: {}",
+            Arc::strong_count(&arc_apple)
+        );
+    }
+    println!("apple is {}", apple);
+    thread::sleep(Duration::from_secs(2));
 }
