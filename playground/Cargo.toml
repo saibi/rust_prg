@@ -1,4 +1,3 @@
-workspace = { members = [ "custom_types","formatting", "primitives"] }
 [package]
 name = "playground"
 version = "0.1.0"
