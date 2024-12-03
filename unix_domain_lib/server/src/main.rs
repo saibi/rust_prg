@@ -3,7 +3,7 @@ use std::thread;
 use unix_domain_lib::{create_unix_domain_server, logger};
 
 fn main() -> std::io::Result<()> {
-    logger::start("debug", "/tmp/server.log", true);
+    let _logger = logger::start("debug", "/tmp/server", true);
 
     let sock_path = "/tmp/.rdecho.sock";
 
