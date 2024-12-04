@@ -152,16 +152,25 @@ impl StreamThread {
     }
 
     pub fn stop(&mut self) {
-        log::debug!("stop");
         if let Some(handle) = self.handle.take() {
-            *self.exit_flag.lock().unwrap() = true;
-            log::debug!("wait for the thread to finish");
-
+            if !handle.is_finished() {
+                log::debug!("stop");
+                *self.exit_flag.lock().unwrap() = true;
+                log::debug!("wait for the thread to finish");
+            }
             if let Err(e) = handle.join() {
                 log::error!("Failed to join thread: {:?}", e);
+            } else {
+                log::debug!("thread finished");
             }
-            log::debug!("thread finished");
-            self.handle = None;
+            //self.handle = None;
+        }
+    }
+
+    pub fn is_finished(&self) -> bool {
+        match &self.handle {
+            Some(handle) => handle.is_finished(),
+            None => true,
         }
     }
 }

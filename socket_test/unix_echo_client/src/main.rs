@@ -15,7 +15,6 @@ fn main() {
             match cmd.as_str() {
                 "/q" => {
                     stream_thread.stop();
-                    println!("hit [enter] to quit");
                     break;
                 }
                 _ => {
