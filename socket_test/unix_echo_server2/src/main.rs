@@ -1,8 +1,6 @@
-use std::os::unix::net::UnixListener;
-
 use lib::logger;
+use lib::server::SingleUnixServer;
 use lib::stdinthread::StdinThread;
-use lib::streamthread::StreamThread;
 
 fn main() {
     let _logger = logger::start("debug", "", true);
@@ -15,9 +13,7 @@ fn main() {
 
     let stdin = StdinThread::new();
 
-    let listener = UnixListener::bind(sock_path).unwrap();
-    listener.set_nonblocking(true).unwrap();
-    let mut stream_thread: Option<StreamThread> = None;
+    let mut server = SingleUnixServer::new(sock_path);
 
     log::info!("Start main loop");
     help();
@@ -36,20 +32,9 @@ fn main() {
             }
         }
 
-        if let Some(worker) = &mut stream_thread {
-            if let Some(msg) = worker.recv() {
-                println!("echo : {}", msg);
-                worker.send(msg);
-            }
-            if worker.is_finished() {
-                log::info!("stream thread is finished");
-                stream_thread = None;
-            }
-        } else {
-            if let Ok((stream, _)) = listener.accept() {
-                log::info!("accept new stream");
-                stream_thread = Some(StreamThread::new(stream));
-            }
+        if let Some(msg) = server.recv() {
+            println!("echo : {}", msg);
+            server.send(msg);
         }
 
         std::thread::sleep(std::time::Duration::from_millis(100));

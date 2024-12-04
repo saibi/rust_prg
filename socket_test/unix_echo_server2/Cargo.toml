@@ -1,6 +1,6 @@
 [package]
-name = "unix_echo_server"
-version = "0.1.1"
+name = "unix_echo_server2"
+version = "0.1.0"
 edition = "2021"
 
 [dependencies]
