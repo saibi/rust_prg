@@ -144,7 +144,9 @@ impl StreamThread {
 
     pub fn send(&self, msg: String) {
         log::debug!("send: {}", msg);
-        self.tx.send(msg).unwrap();
+        if let Err(_) = self.tx.send(msg) {
+            log::error!("Failed to send message");
+        }
     }
 
     pub fn recv(&self) -> Option<String> {
