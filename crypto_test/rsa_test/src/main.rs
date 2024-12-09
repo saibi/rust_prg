@@ -5,11 +5,15 @@ use rsa::{
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // 현재 작업 디렉토리 출력
+    let cwd = std::env::current_dir()?;
+    println!("현재 작업 디렉토리: {}", cwd.display());
+
     // SSH 키 파일 경로 (예시)
     // openssl genrsa -out private.pem 2048
     // openssl rsa -in private.pem -pubout -out public.pem
-    let private_key_path = "./src/private.pem";
-    let public_key_path = "./src/public.pem";
+    let private_key_path = "private.pem";
+    let public_key_path = "public.pem";
 
     // 키 파일 읽기
     let private_key_pem = fs::read_to_string(private_key_path)?;
