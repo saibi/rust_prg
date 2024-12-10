@@ -1,3 +1,3 @@
 [workspace]
 resolver = "2"
-members = [ "aes_test", "chacha20_test","rsa_test", "rsa_test2"]
+members = ["aes_test", "chacha20_test", "rsa_test", "rsa_test2", "ring_test"]
