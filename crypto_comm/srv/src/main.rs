@@ -11,7 +11,8 @@ fn main() {
 
     for stream in listener.incoming() {
         log::debug!("accept client");
-        let mut stream = stream.unwrap();
+        let stream = stream.unwrap();
+        let mut stream = lib::SimplePacketStream::new(stream);
 
         loop {
             let mut buf = [0; 1024];
@@ -19,9 +20,10 @@ fn main() {
                 Ok(n) => {
                     if n == 0 {
                         // connection was closed
+                        log::debug!("connection closed");
                         break;
                     }
-                    log::debug!("recv from client: {}", String::from_utf8_lossy(&buf));
+                    log::debug!("echo to client: [{}]", String::from_utf8_lossy(&buf));
                     stream.write(&buf[0..n]).unwrap();
                 }
                 Err(err) => {
