@@ -3,9 +3,14 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::net::TcpListener;
 
+const SERVER_CERT_PATH: &str = "../ymkim-desktop.dev.pem";
+const SERVER_KEY_PATH: &str = "../ymkim-desktop.dev-key.pem";
+
 fn main() -> std::io::Result<()> {
-    let mut cert_file = File::open("cert.pem")?;
-    let mut key_file = File::open("key.pem")?;
+    println!("cwd : {:?}", std::env::current_dir().unwrap());
+
+    let mut cert_file = File::open(SERVER_CERT_PATH)?;
+    let mut key_file = File::open(SERVER_KEY_PATH)?;
     let mut cert = Vec::new();
     let mut key = Vec::new();
     cert_file.read_to_end(&mut cert)?;
