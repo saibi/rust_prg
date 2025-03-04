@@ -3,6 +3,7 @@ fn main() {
     using_partial_eq();
     eq_test();
     partial_ord_test();
+    from_test();
 }
 
 #[derive(Debug)]
@@ -179,4 +180,50 @@ fn partial_ord_test() {
 
     class.sort_by(|a, b| a.partial_cmp(b).unwrap());
     println!("sorted by height: {:?}", class);
+}
+
+#[derive(Debug)]
+struct Book2 {
+    title: String,
+    author: String,
+    published: u32,
+    isbn: String,
+}
+
+// impl From<Book2> for u32 {
+//     fn from(book: Book2) -> u32 {
+//         book.isbn.parse().unwrap_or(0)
+//     }
+// }
+
+impl TryFrom<Book2> for u32 {
+    type Error = &'static str;
+
+    fn try_from(book: Book2) -> Result<u32, Self::Error> {
+        book.isbn.parse().map_err(|_| "Invalid ISBN")
+    }
+}
+
+fn from_test() {
+    let book = Book2 {
+        title: "The Rust Programming Language".to_string(),
+        author: "Steve Klabnik and Carol Nichols".to_string(),
+        published: 20230228,
+        isbn: "18A-1593278281".to_string(),
+    };
+
+    let rust_in_action = Book2 {
+        title: "Rust in Action".to_string(),
+        author: "Tim McNamara".to_string(),
+        published: 20230228,
+        isbn: "1617294551".to_string(),
+    };
+
+    // let isbn: u32 = book.into();
+    // let isbn2 = u32::from(rust_in_action);
+    // println!("isbn: {}, isbn2: {}", isbn, isbn2);
+
+    let isbn: Result<u32, &str> = book.try_into();
+    let isbn2 = u32::try_from(rust_in_action);
+    println!("isbn: {:?}, isbn2: {:?}", isbn, isbn2);
 }
