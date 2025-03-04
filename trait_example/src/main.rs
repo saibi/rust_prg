@@ -2,6 +2,7 @@ fn main() {
     partial_eq_test();
     using_partial_eq();
     eq_test();
+    partial_ord_test();
 }
 
 #[derive(Debug)]
@@ -107,4 +108,75 @@ struct MyVal {
 fn eq_test() {
     let mut map = HashMap::new();
     map.insert(MyKey { x: 1, y: 2 }, MyVal { distance: 3.0 });
+}
+
+#[derive(Debug, PartialEq)]
+struct Person2 {
+    name: String,
+    age: i16,
+    height: i16,
+}
+
+impl PartialOrd for Person2 {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        if self.height <= 0 || other.height <= 0 {
+            return None;
+        }
+
+        // if self.height > other.height {
+        //     Some(std::cmp::Ordering::Greater)
+        // } else if self.height < other.height {
+        //     Some(std::cmp::Ordering::Less)
+        // } else {
+        //     Some(std::cmp::Ordering::Equal)
+        // }
+        Some(self.height.cmp(&other.height))
+    }
+}
+
+fn partial_ord_test() {
+    let a = Person2 {
+        name: "Alice".to_string(),
+        age: 28,
+        height: 193,
+    };
+
+    let b = Person2 {
+        name: "Bob".to_string(),
+        age: 25,
+        height: 180,
+    };
+
+    if a > b {
+        println!("{} is taller than {}", a.name, b.name);
+    } else if a < b {
+        println!("{} is shorter than {}", a.name, b.name);
+    } else {
+        println!("{} and {} are the same height", a.name, b.name);
+    }
+
+    if a.partial_cmp(&b).unwrap() == std::cmp::Ordering::Greater {
+        println!("{} is taller than {}", a.name, b.name);
+    }
+
+    let mut class = vec![
+        Person2 {
+            name: "Alice".to_string(),
+            age: 28,
+            height: 173,
+        },
+        Person2 {
+            name: "Bob".to_string(),
+            age: 25,
+            height: 180,
+        },
+        Person2 {
+            name: "Charlie".to_string(),
+            age: 30,
+            height: 165,
+        },
+    ];
+
+    class.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    println!("sorted by height: {:?}", class);
 }
