@@ -1,9 +1,10 @@
 fn main() {
-    partial_eq_test();
-    using_partial_eq();
-    eq_test();
-    partial_ord_test();
-    from_test();
+    // partial_eq_test();
+    // using_partial_eq();
+    // eq_test();
+    // partial_ord_test();
+    // from_test();
+    book_shelf_test();
 }
 
 #[derive(Debug)]
@@ -226,4 +227,52 @@ fn from_test() {
     let isbn: Result<u32, &str> = book.try_into();
     let isbn2 = u32::try_from(rust_in_action);
     println!("isbn: {:?}, isbn2: {:?}", isbn, isbn2);
+}
+
+#[derive(Debug)]
+struct BookShelf<'a> {
+    books: &'a [Book],
+}
+
+impl<'a> Iterator for BookShelf<'a> {
+    type Item = &'a Book;
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some((first, remains)) = self.books.split_first() {
+            self.books = remains;
+            Some(first)
+        } else {
+            None
+        }
+    }
+}
+
+fn book_shelf_test() {
+    let mut book_array = [
+        Book {
+            title: String::from("The Fellowship of the Ring"),
+            author: String::from("J. R. R. Tolkien"),
+            published: 19540729,
+        },
+        Book {
+            title: String::from("The Two Towers"),
+            author: String::from("J. R. R. Tolkien"),
+            published: 19541111,
+        },
+        Book {
+            title: String::from("The Return of the King"),
+            author: String::from("J. R. R. Tolkien"),
+            published: 19551020,
+        },
+    ];
+
+    let mut mybooks_iter = BookShelf { books: &book_array };
+    println!("mybooks_iter: {:?}", mybooks_iter.next());
+    println!("mybooks_iter: {:?}", mybooks_iter.next());
+    println!("mybooks_iter: {:?}", mybooks_iter.next());
+    println!("mybooks_iter: {:?}", mybooks_iter.next());
+
+    let mybooks_for = BookShelf { books: &book_array };
+    for book in mybooks_for {
+        println!("book: {:?}", book);
+    }
 }
