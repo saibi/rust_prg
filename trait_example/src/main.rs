@@ -1,6 +1,7 @@
 fn main() {
     partial_eq_test();
     using_partial_eq();
+    eq_test();
 }
 
 #[derive(Debug)]
@@ -52,7 +53,7 @@ fn partial_eq_test() {
     }
 }
 
-use std::io;
+use std::{collections::HashMap, io};
 
 #[derive(Debug, PartialEq)]
 pub enum Command {
@@ -91,4 +92,19 @@ fn using_partial_eq() {
         Command::Execute(p) => println!("Execute: {p}"),
     }
     println!("end of using_partial_eq");
+}
+
+#[derive(PartialEq, Eq, Hash)]
+struct MyKey {
+    x: i32,
+    y: i32,
+}
+
+struct MyVal {
+    distance: f32,
+}
+
+fn eq_test() {
+    let mut map = HashMap::new();
+    map.insert(MyKey { x: 1, y: 2 }, MyVal { distance: 3.0 });
 }
