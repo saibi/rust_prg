@@ -11,6 +11,11 @@ const BUFFER_SIZE: usize = 1024;
 fn main() -> io::Result<()> {
     let socket = UdpSocket::bind("0.0.0.0:0")?;
 
+    // 멀티캐스트 그룹 가입
+    socket.join_multicast_v4(&MULTICAST_ADDR, &Ipv4Addr::new(0, 0, 0, 0))?;
+
+    println!("my addr: {}", socket.local_addr()?);
+
     // 소켓을 복제하여 송신용과 수신용으로 사용
     let socket_clone = socket.try_clone()?;
 
