@@ -87,20 +87,28 @@ fn test_collatz_length() {
     assert_eq!(collatz_length(3), 8);
 }
 
+fn test_array() {
+    let mut a: [i8; 10] = [42; 10];
+    a[15] = 0;
+    println!("a: {a:?}");
+}
+
 fn main() {
     // test_str();
     // test_infer();
 
-    let n = 20;
-    println!("fib({n}) = {}", fib(n));
+    // let n = 20;
+    // println!("fib({n}) = {}", fib(n));
 
-    fib(0);
-    println!("gcd: {}", gcd(143, 52));
+    // fib(0);
+    // println!("gcd: {}", gcd(143, 52));
 
-    let n = 4;
-    println!("{n}! = {}", factorial(n));
+    // let n = 4;
+    // println!("{n}! = {}", factorial(n));
 
-    // fizzbuzz(n);
+    // fizzbuzz(n); // panic
 
-    println!("콜라츠 수열 길이: {}", collatz_length(3));
+    // println!("콜라츠 수열 길이: {}", collatz_length(3));
+
+    test_array();
 }
