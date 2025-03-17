@@ -89,8 +89,132 @@ fn test_collatz_length() {
 
 fn test_array() {
     let mut a: [i8; 10] = [42; 10];
-    a[15] = 0;
-    println!("a: {a:?}");
+    a[5] = 0;
+    println!("a: {a:#?}");
+}
+
+fn transpose(matrix: [[i32; 3]; 3]) -> [[i32; 3]; 3] {
+    let mut transposed = [[0; 3]; 3];
+    for i in 0..3 {
+        for j in 0..3 {
+            transposed[i][j] = matrix[j][i];
+        }
+    }
+    transposed
+}
+
+#[test]
+fn test_transpose() {
+    let matrix = [
+        [101, 102, 103], //
+        [201, 202, 203],
+        [301, 302, 303],
+    ];
+    let transposed = transpose(matrix);
+    assert_eq!(
+        transposed,
+        [
+            [101, 201, 301], //
+            [102, 202, 302],
+            [103, 203, 303],
+        ]
+    );
+}
+
+// 해당 좌표의 제곱을 더하고
+// 제곱근을 사용하여 벡터의 크기를 계산합니다. `v.sqrt()`와 같은 `sqrt()` 메서드를 사용하여 제곱근을
+// 계산합니다.
+
+fn magnitude(point: &[f64; 3]) -> f64 {
+    let mut sum = 0.0;
+    for i in 0..3 {
+        sum += point[i] * point[i];
+    }
+    sum.sqrt()
+}
+
+// 벡터의 크기를 계산하고 모든 좌표를 해당 크기로 나눠서
+// 벡터를 정규화합니다.
+
+fn normalize(v: &mut [f64; 3]) {
+    let m = magnitude(v);
+    for i in 0..3 {
+        v[i] /= m;
+    }
+}
+
+// 다음 `main`을 사용하여 작업을 테스트합니다.
+
+fn test_normalize() {
+    println!("단위 벡터의 크기: {}", magnitude(&[0.0, 1.0, 0.0]));
+
+    let mut v = [1.0, 2.0, 9.0];
+    println!("{v:?} 크기: {}", magnitude(&v));
+    normalize(&mut v);
+    println!("정규화 후 {v:?}의 크기: {}", magnitude(&v));
+}
+
+#[derive(Debug)]
+/// 컨트롤러가 반응해야 하는 엘리베이터 시스템의 이벤트입니다.
+enum Event {
+    // TODO: 필요한 변형들을 추가하세요.
+    Arrived(i32),
+    Opened,
+    Closed,
+    Lobby(i32, Direction),
+    Pressed(i32),
+}
+
+/// 이동 방향입니다.
+#[derive(Debug)]
+enum Direction {
+    Up,
+    Down,
+}
+
+/// 엘리베이터가 지정된 층에 도착했습니다.
+fn car_arrived(floor: i32) -> Event {
+    // todo!()
+    Event::Arrived(floor)
+}
+
+/// 엘리베이터 문이 열렸습니다.
+fn car_door_opened() -> Event {
+    // todo!()
+    Event::Opened
+}
+
+/// 엘리베이터 문이 닫혔습니다.
+fn car_door_closed() -> Event {
+    // todo!()
+    Event::Closed
+}
+
+/// 지정된 층의 엘리베이터 로비에서 방향 버튼을 눌렀습니다.
+fn lobby_call_button_pressed(floor: i32, dir: Direction) -> Event {
+    // todo!()
+    Event::Lobby(floor, dir)
+}
+
+/// 엘리베이터에서 층 버튼을 눌렀습니다.
+fn car_floor_button_pressed(floor: i32) -> Event {
+    // todo!()
+    Event::Pressed(floor)
+}
+
+fn test_elevator() {
+    println!(
+        "1층 승객이 위쪽 버튼을 눌렀습니다. {:?}",
+        lobby_call_button_pressed(0, Direction::Up)
+    );
+    println!("엘리베이터가 1층에 도착했습니다: {:?}", car_arrived(0));
+    println!("엘리베이터 문이 열렸습니다. {:?}", car_door_opened());
+    println!(
+        "승객이 3층 버튼을 눌렀습니다. {:?}",
+        car_floor_button_pressed(3)
+    );
+    println!("엘리베이터 문이 닫혔습니다: {:?}", car_door_closed());
+    println!("엘리베이터가 3층에 도착했습니다. {:?}", car_arrived(3));
 }
 
 fn main() {
@@ -110,5 +234,8 @@ fn main() {
 
     // println!("콜라츠 수열 길이: {}", collatz_length(3));
 
-    test_array();
+    // test_array();
+
+    // test_normalize();
+    test_elevator();
 }
