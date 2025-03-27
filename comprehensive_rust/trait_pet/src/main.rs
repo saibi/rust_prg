@@ -73,6 +73,8 @@ fn main() {
     println!("{:?}", p2);
 
     tester_main();
+
+    test_trait();
 }
 
 use std::fmt::Display;
@@ -115,4 +117,27 @@ fn tester_main() {
         inner: StderrLogger,
     };
     do_things(&l);
+}
+
+#[derive(Debug)]
+struct Foo(String);
+
+impl From<u32> for Foo {
+    fn from(from: u32) -> Self {
+        Foo(format!("Converted from u32: {}", from))
+    }
+}
+
+impl From<bool> for Foo {
+    fn from(from: bool) -> Self {
+        Foo(format!("Converted from bool: {}", from))
+    }
+}
+
+fn test_trait() {
+    let foo_from_u32 = Foo::from(42);
+    let foo_from_bool = Foo::from(true);
+
+    println!("{foo_from_u32:?}");
+    println!("{:?}", foo_from_bool);
 }
