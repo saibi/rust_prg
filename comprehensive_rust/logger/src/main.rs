@@ -35,7 +35,7 @@ impl Logger for VerbosityFilter {
 fn main() {
     let l = VerbosityFilter {
         max_verbosity: 3,
-        inner: StderrLogger,
+        inner: StderrLogger {},
     };
     do_things(&l);
 }
