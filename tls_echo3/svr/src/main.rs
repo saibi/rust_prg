@@ -1,12 +1,17 @@
-use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod, SslVerifyMode};
 use std::io::{Read, Write};
 use std::net::TcpListener;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // TLS acceptor 설정
     let mut acceptor = SslAcceptor::mozilla_intermediate(SslMethod::tls())?;
-    acceptor.set_private_key_file("localhost-key.pem", SslFiletype::PEM)?;
-    acceptor.set_certificate_chain_file("localhost.pem")?;
+    acceptor.set_private_key_file("../localhost-key.pem", SslFiletype::PEM)?;
+    acceptor.set_certificate_chain_file("../localhost.pem")?;
+
+    // 클라이언트 인증서 검증 설정
+    acceptor.set_verify(SslVerifyMode::PEER | SslVerifyMode::FAIL_IF_NO_PEER_CERT);
+    acceptor.set_ca_file("../rootCA.pem")?;
+
     acceptor.check_private_key()?;
     let acceptor = acceptor.build();
 
@@ -18,19 +23,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         match stream {
             Ok(stream) => {
                 // TLS 스트림 생성
-                let mut ssl_stream = acceptor.accept(stream)?;
+                let mut ssl_stream = match acceptor.accept(stream) {
+                    Ok(stream) => stream,
+                    Err(e) => {
+                        println!("TLS 핸드셰이크 실패: {}", e);
+                        continue;
+                    }
+                };
+
+                // 클라이언트 인증서 검증
+                if let Some(cert) = ssl_stream.ssl().peer_certificate() {
+                    println!("클라이언트 인증서 검증 성공");
+                    if let Some(subject) = cert.subject_name().entries().next() {
+                        println!("클라이언트 주체: {}", subject.data().as_utf8()?);
+                    }
+                }
 
                 // 클라이언트로부터 데이터 수신
                 let mut buf = [0; 1024];
                 loop {
                     match ssl_stream.read(&mut buf) {
                         Ok(0) => {
-                            // 연결이 종료됨
                             println!("클라이언트 연결 종료");
                             break;
                         }
                         Ok(size) => {
-                            // 수신한 데이터를 그대로 에코
                             ssl_stream.write_all(&buf[..size])?;
                             println!("에코 완료: {} 바이트", size);
                         }

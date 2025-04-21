@@ -5,7 +5,12 @@ use std::net::TcpStream;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // TLS connector 설정
     let mut connector = SslConnector::builder(SslMethod::tls())?;
-    connector.set_ca_file("rootCA.pem")?;
+    connector.set_ca_file("../rootCA.pem")?;
+
+    // 클라이언트 인증서 설정
+    connector.set_certificate_file("../echo-client.pem", SslFiletype::PEM)?;
+    connector.set_private_key_file("../echo-client-key.pem", SslFiletype::PEM)?;
+
     let connector = connector.build();
 
     // 서버에 연결
