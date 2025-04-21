@@ -5,8 +5,16 @@ use std::net::TcpListener;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // TLS acceptor 설정
     let mut acceptor = SslAcceptor::mozilla_intermediate(SslMethod::tls())?;
-    acceptor.set_private_key_file("../localhost-key.pem", SslFiletype::PEM)?;
-    acceptor.set_certificate_chain_file("../localhost.pem")?;
+
+    //acceptor.set_private_key_file("../localhost-key.pem", SslFiletype::PEM)?;
+    let key_data = std::fs::read("../localhost-key.pem")?;
+    let key = openssl::pkey::PKey::private_key_from_pem(&key_data)?;
+    acceptor.set_private_key(&key)?;
+
+    //acceptor.set_certificate_chain_file("../localhost.pem")?;
+    let cert_data = std::fs::read("../localhost.pem")?;
+    let cert = openssl::x509::X509::from_pem(&cert_data)?;
+    acceptor.set_certificate(&cert)?;
 
     // 클라이언트 인증서 검증 설정
     acceptor.set_verify(SslVerifyMode::PEER | SslVerifyMode::FAIL_IF_NO_PEER_CERT);

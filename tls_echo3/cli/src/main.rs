@@ -11,6 +11,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     connector.set_certificate_file("../echo-client.pem", SslFiletype::PEM)?;
     connector.set_private_key_file("../echo-client-key.pem", SslFiletype::PEM)?;
 
+    // wrong client cert
+    // connector.set_certificate_file("test-client.pem", SslFiletype::PEM)?;
+    // connector.set_private_key_file("test-client-key.pem", SslFiletype::PEM)?;
+
     let connector = connector.build();
 
     // 서버에 연결
