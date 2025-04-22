@@ -3,8 +3,8 @@ use std::io::{Read, Write};
 use std::net::TcpListener;
 
 const ROOT_CA_PATH: &str = "../certs/rootCA.pem";
-const SERVER_CERT_PATH: &str = "../certs/localhost.pem";
-const SERVER_KEY_PATH: &str = "../certs/localhost-key.pem";
+const SERVER_CERT_PATH: &str = "../certs/server.pem";
+const SERVER_KEY_PATH: &str = "../certs/server-key.pem";
 
 const BIND_ADDRESS: &str = "0.0.0.0:8443";
 
