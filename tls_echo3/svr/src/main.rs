@@ -6,6 +6,8 @@ const ROOT_CA_PATH: &str = "../certs/rootCA.pem";
 const SERVER_CERT_PATH: &str = "../certs/localhost.pem";
 const SERVER_KEY_PATH: &str = "../certs/localhost-key.pem";
 
+const BIND_ADDRESS: &str = "0.0.0.0:8443";
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // TLS acceptor 설정
     let mut acceptor = SslAcceptor::mozilla_intermediate(SslMethod::tls())?;
@@ -31,8 +33,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let acceptor = acceptor.build();
 
     // TCP 리스너 생성
-    let listener = TcpListener::bind("127.0.0.1:8443")?;
-    println!("서버가 127.0.0.1:8443에서 실행 중입니다...");
+    let listener = TcpListener::bind(BIND_ADDRESS)?;
+    println!("서버가 {}에서 실행 중입니다...", BIND_ADDRESS);
 
     for stream in listener.incoming() {
         match stream {

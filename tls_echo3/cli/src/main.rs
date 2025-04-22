@@ -6,6 +6,9 @@ const ROOT_CA_PATH: &str = "../certs/rootCA.pem";
 const CLIENT_CERT_PATH: &str = "../certs/echo-client.pem";
 const CLIENT_KEY_PATH: &str = "../certs/echo-client-key.pem";
 
+const SERVER_ADDRESS: &str = "127.0.0.1:8443";
+const SERVER_HOSTNAME: &str = "localhost";
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // TLS connector 설정
     let mut connector = SslConnector::builder(SslMethod::tls())?;
@@ -22,8 +25,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let connector = connector.build();
 
     // 서버에 연결
-    let stream = TcpStream::connect("127.0.0.1:8443")?;
-    let mut ssl_stream = connector.connect("localhost", stream)?;
+    let stream = TcpStream::connect(SERVER_ADDRESS)?;
+    let mut ssl_stream = connector.connect(SERVER_HOSTNAME, stream)?;
 
     println!("서버에 연결되었습니다. 메시지를 입력하세요 (종료하려면 'quit' 입력):");
 
