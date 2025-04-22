@@ -2,14 +2,18 @@ use openssl::ssl::{SslConnector, SslFiletype, SslMethod};
 use std::io::{self, Read, Write};
 use std::net::TcpStream;
 
+const ROOT_CA_PATH: &str = "../certs/rootCA.pem";
+const CLIENT_CERT_PATH: &str = "../certs/echo-client.pem";
+const CLIENT_KEY_PATH: &str = "../certs/echo-client-key.pem";
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // TLS connector 설정
     let mut connector = SslConnector::builder(SslMethod::tls())?;
-    connector.set_ca_file("../rootCA.pem")?;
+    connector.set_ca_file(ROOT_CA_PATH)?;
 
     // 클라이언트 인증서 설정
-    connector.set_certificate_file("../echo-client.pem", SslFiletype::PEM)?;
-    connector.set_private_key_file("../echo-client-key.pem", SslFiletype::PEM)?;
+    connector.set_certificate_file(CLIENT_CERT_PATH, SslFiletype::PEM)?;
+    connector.set_private_key_file(CLIENT_KEY_PATH, SslFiletype::PEM)?;
 
     // wrong client cert
     // connector.set_certificate_file("test-client.pem", SslFiletype::PEM)?;
