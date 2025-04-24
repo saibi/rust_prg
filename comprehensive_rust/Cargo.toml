@@ -1,3 +1,3 @@
 [workspace]
-members = [ "bufread", "default_trait", "eval", "from_into", "generic_fn","greeting", "impl_trait", "logger", "method_self", "op_trait", "std_lib", "trait_pet"]
+members = [ "bufread", "closure", "default_trait", "eval", "from_into", "generic_fn","greeting", "impl_trait", "logger", "method_self", "op_trait", "std_lib", "trait_pet"]
 resolver = "2"
