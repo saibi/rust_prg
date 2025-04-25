@@ -1,8 +1,8 @@
-use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod, SslVerifyMode};
 use std::io::{Read, Write};
 use std::net::TcpListener;
 
-// const ROOT_CA_PATH: &str = "../certs/rootCA.pem";
+const ROOT_CA_PATH: &str = "../certs/rootCA.pem";
 const SERVER_CERT_PATH: &str = "../certs/server.pem";
 const SERVER_KEY_PATH: &str = "../certs/server-key.pem";
 
@@ -26,15 +26,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // acceptor.set_certificate(&cert)?;
 
     // 클라이언트 인증서 검증 설정
-    // acceptor.set_verify(SslVerifyMode::PEER | SslVerifyMode::FAIL_IF_NO_PEER_CERT);
-    // acceptor.set_ca_file(ROOT_CA_PATH)?;
+    acceptor.set_verify(SslVerifyMode::PEER | SslVerifyMode::FAIL_IF_NO_PEER_CERT);
+    acceptor.set_ca_file(ROOT_CA_PATH)?;
 
     acceptor.check_private_key()?;
     let acceptor = acceptor.build();
 
     // TCP 리스너 생성
     let listener = TcpListener::bind(BIND_ADDRESS)?;
-    println!("Server is running on {}...", BIND_ADDRESS);
+    println!("서버가 {}에서 실행 중입니다...", BIND_ADDRESS);
 
     for stream in listener.incoming() {
         match stream {
@@ -43,16 +43,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let mut ssl_stream = match acceptor.accept(stream) {
                     Ok(stream) => stream,
                     Err(e) => {
-                        println!("TLS handshake failed: {}", e);
+                        println!("TLS 핸드셰이크 실패: {}", e);
                         continue;
                     }
                 };
 
                 // 클라이언트 인증서 검증
                 if let Some(cert) = ssl_stream.ssl().peer_certificate() {
-                    println!("Client certificate verification successful");
+                    println!("클라이언트 인증서 검증 성공");
                     if let Some(subject) = cert.subject_name().entries().next() {
-                        println!("Client subject: {}", subject.data().as_utf8()?);
+                        println!("클라이언트 주체: {}", subject.data().as_utf8()?);
                     }
                 }
 
@@ -61,25 +61,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 loop {
                     match ssl_stream.read(&mut buf) {
                         Ok(0) => {
-                            println!("Client connection closed");
+                            println!("클라이언트 연결 종료");
                             break;
                         }
                         Ok(size) => {
                             ssl_stream.write_all(&buf[..size])?;
-                            println!(
-                                "recv&echo {} bytes : {}",
-                                size,
-                                String::from_utf8_lossy(&buf[..size])
-                            );
+                            println!("에코 완료: {} 바이트", size);
                         }
                         Err(e) => {
-                            println!("Read error: {}", e);
+                            println!("읽기 오류: {}", e);
                             break;
                         }
                     }
                 }
             }
-            Err(e) => println!("Connection error: {}", e),
+            Err(e) => println!("연결 오류: {}", e),
         }
     }
 
