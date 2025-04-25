@@ -7,7 +7,7 @@ const CLIENT_CERT_PATH: &str = "../certs/echo-client.pem";
 const CLIENT_KEY_PATH: &str = "../certs/echo-client-key.pem";
 
 const SERVER_ADDRESS: &str = "127.0.0.1:8443";
-const SERVER_HOSTNAME: &str = "localhost";
+const SERVER_HOSTNAME: &str = "test.edger.dev";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // TLS connector 설정
