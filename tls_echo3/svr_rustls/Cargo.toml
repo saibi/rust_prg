@@ -1,0 +1,10 @@
+[package]
+name = "svr_rustls"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rustls = { version = "0.21", features = ["dangerous_configuration"] }
+rustls-pemfile = "1.0"
+webpki = "0.22"
+webpki-roots = "0.25"

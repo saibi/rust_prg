@@ -1,0 +1,11 @@
+[package]
+name = "cli_rustls"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rustls = "0.21"
+webpki-roots = "0.25"
+anyhow = "1.0"
+rustls-pemfile = "1.0"
+clap = { version = "4.5.37", features = ["derive"] }
