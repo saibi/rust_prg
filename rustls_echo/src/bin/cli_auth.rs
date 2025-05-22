@@ -57,7 +57,15 @@ fn main() -> Result<()> {
     let mut stream = TcpStream::connect(&cli.server_address)?;
     let mut tls_stream = rustls::Stream::new(&mut connector, &mut stream);
 
-    println!("Connected. Enter message(type 'quit' to exit):");
+    // TLS 핸드셰이크를 완료하여 프로토콜 버전을 협상
+    tls_stream.flush()?; // 핸드셰이크를 강제로 완료
+    let protocol_version = tls_stream.conn.protocol_version();
+    if let Some(version) = protocol_version {
+        println!("Connected. TLS protocol version: {:?}", version);
+    } else {
+        println!("TLS protocol version: not negotiated yet");
+    }
+    println!("Enter message(type 'quit' to exit):");
 
     loop {
         // 사용자 입력 받기

@@ -57,6 +57,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     Ok(mut conn) => {
                         let mut tls = Stream::new(&mut conn, &mut stream);
 
+                        // Perform handshake before accessing protocol_version
+                        match tls.conn.complete_io(&mut tls.sock) {
+                            Ok(_) => {
+                                if let Some(protocol) = tls.conn.protocol_version() {
+                                    println!("TLS version: {:?}", protocol);
+                                } else {
+                                    println!("Could not retrieve TLS version information.");
+                                }
+                            }
+                            Err(e) => {
+                                println!("TLS handshake failed: {}", e);
+                                continue;
+                            }
+                        }
+
                         // 에코 서비스
                         let mut buf = [0; 1024];
                         loop {
