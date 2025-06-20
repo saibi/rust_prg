@@ -1,0 +1,12 @@
+[package]
+name = "rustls2"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.40", features = ["derive"] }
+rustls = { version = "0.21", features = ["dangerous_configuration"] }
+rustls-pemfile = "1.0"
+webpki = "0.22"
+webpki-roots = "0.25"
+anyhow = "1.0"
