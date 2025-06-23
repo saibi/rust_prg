@@ -75,7 +75,6 @@ basicConstraints = CA:FALSE
 nsCertType = server
 keyUsage = digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
-subjectAltName = @alt_names
 
 [ client_cert ]
 basicConstraints = CA:FALSE
