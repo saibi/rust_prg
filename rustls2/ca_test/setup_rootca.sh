@@ -8,7 +8,7 @@ KEY_FILE=$WORK_DIR/$CA_KEY
 CERT_FILE=$WORK_DIR/$CA_CERT
 CONF_FILE=$WORK_DIR/openssl.cnf
 
-DAYS=9125 # 25 years
+DAYS=10950 # 30 years
 KEY_SIZE=4096
 
 if [ -d "$WORK_DIR" ] && [ -f "$CERT_FILE" ]; then

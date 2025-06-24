@@ -9,4 +9,6 @@ rustls = { version = "0.21", features = ["dangerous_configuration"] }
 rustls-pemfile = "1.0"
 webpki = "0.22"
 webpki-roots = "0.25"
+x509-parser = "0.15"
+tempfile = "3.8"
 anyhow = "1.0"
