@@ -11,12 +11,12 @@ if [ ! -d "$WORK_DIR" ] || [ ! -f "$ROOTCA_CERT" ]; then
 fi
 
 if [ $# -lt 2 ]; then
-    echo "Usage: $0 <server|client> <CN> [days=365]"
+    echo "Usage: $0 <server|client|both> <CN> [days=365]"
     exit 1
 fi
 TYPE=$1
-if [ "$TYPE" != "server" ] && [ "$TYPE" != "client" ]; then
-    echo "Invalid type: $TYPE. Use 'server' or 'client'."
+if [ "$TYPE" != "server" ] && [ "$TYPE" != "client" ] && [ "$TYPE" != "both" ]; then
+    echo "Invalid type: $TYPE. Use 'server', 'client', or 'both'."
     exit 1
 fi
 CN=$2
@@ -51,6 +51,25 @@ EOF
 
     openssl ca -batch -config $CONF_FILE \
         -extensions server_cert \
+        -extfile $EXT_CONF \
+        -in $CSR_FILE \
+        -out $CERT_FILE -days $DAYS \
+        -cert $ROOTCA_CERT -keyfile $ROOTCA_KEY
+elif [ "$TYPE" == "both" ]; then
+    EXT_CONF=$WORK_DIR/both_ext.cnf
+
+    cat >$EXT_CONF <<EOF
+[both_cert]
+subjectAltName = @both_alt_names
+extendedKeyUsage = serverAuth, clientAuth
+
+[both_alt_names]
+DNS.1 = localhost
+DNS.2 = $CN
+EOF
+
+    openssl ca -batch -config $CONF_FILE \
+        -extensions both_cert \
         -extfile $EXT_CONF \
         -in $CSR_FILE \
         -out $CERT_FILE -days $DAYS \
