@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use lib::{
     MULTICAST_ADDR, PORT, get_local_ip_address, handle_user_input, initialize_multicast_socket,
-    send_multicast_message, start_multicast_receiver,
+    send_udp_msg, start_multicast_receiver,
 };
 
 /// 멀티캐스트 클라이언트 메인 함수
@@ -33,7 +33,7 @@ fn main() -> io::Result<()> {
     // 잠시 대기 후 "hello" 메시지 전송 (수신 준비 시간 확보)
     thread::sleep(Duration::from_millis(500));
     let multicast_addr = SocketAddr::new(IpAddr::V4(MULTICAST_ADDR), PORT);
-    send_multicast_message(&socket_clone, "hello", multicast_addr)?;
+    send_udp_msg(&socket_clone, "hello", multicast_addr)?;
 
     // 사용자 입력 처리
     handle_user_input(&socket_clone)?;

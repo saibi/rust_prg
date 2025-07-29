@@ -3,10 +3,13 @@ use std::net::{IpAddr, SocketAddr};
 use std::thread;
 use std::time::Duration;
 
+use lib::udpm::init_multicast_socket;
 use lib::{
-    MULTICAST_ADDR, PORT, get_local_ip_address, handle_user_input_with_hmac,
-    initialize_multicast_socket, send_multicast_message_with_hmac,
-    start_multicast_receiver_with_hmac,
+    MULTICAST_ADDR, PORT,
+    input::handle_user_input_with_hmac,
+    udpm::{
+        get_local_ip_address, send_multicast_message_with_hmac, start_multicast_receiver_with_hmac,
+    },
 };
 
 /// HMAC 기능이 포함된 멀티캐스트 클라이언트 메인 함수
@@ -22,7 +25,7 @@ fn main() -> io::Result<()> {
     let secret_key = b"my_secure_secret_key_for_multicast_hmac_2024";
 
     // 멀티캐스트 소켓 초기화
-    let (socket, socket_clone) = initialize_multicast_socket()?;
+    let (socket, socket_clone) = init_multicast_socket(&MULTICAST_ADDR, PORT)?;
 
     // 자신의 실제 IP 주소 가져오기 (127.0.0.1이나 0.0.0.0이 아닌)
     let my_ip = get_local_ip_address();
