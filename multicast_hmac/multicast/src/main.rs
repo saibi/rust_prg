@@ -3,10 +3,8 @@ use std::net::{IpAddr, SocketAddr};
 use std::thread;
 use std::time::Duration;
 
-use lib::{
-    MULTICAST_ADDR, PORT, get_local_ip_address, handle_user_input, initialize_multicast_socket,
-    send_udp_msg, start_multicast_receiver,
-};
+use lib::udpm::{init_multicast_socket, send_udp_msg, start_multicast_receiver};
+use lib::{MULTICAST_ADDR, PORT, udpm::get_local_ip_address};
 
 /// 멀티캐스트 클라이언트 메인 함수
 ///
@@ -17,7 +15,7 @@ use lib::{
 /// * `io::Result<()>` - 프로그램 실행 성공 시 Ok(()), 실패 시 Err
 fn main() -> io::Result<()> {
     // 멀티캐스트 소켓 초기화
-    let (socket, socket_clone) = initialize_multicast_socket()?;
+    let (socket, socket_clone) = init_multicast_socket(&MULTICAST_ADDR, PORT)?;
 
     // 자신의 실제 IP 주소 가져오기 (127.0.0.1이나 0.0.0.0이 아닌)
     let my_ip = get_local_ip_address();
@@ -33,10 +31,7 @@ fn main() -> io::Result<()> {
     // 잠시 대기 후 "hello" 메시지 전송 (수신 준비 시간 확보)
     thread::sleep(Duration::from_millis(500));
     let multicast_addr = SocketAddr::new(IpAddr::V4(MULTICAST_ADDR), PORT);
-    send_udp_msg(&socket_clone, "hello", multicast_addr)?;
-
-    // 사용자 입력 처리
-    handle_user_input(&socket_clone)?;
+    send_udp_msg(&socket_clone, multicast_addr, "hello")?;
 
     Ok(())
 }
