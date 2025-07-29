@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{self, Write};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket};
 use std::str;
 use std::thread;
@@ -38,7 +38,7 @@ fn main() -> io::Result<()> {
     println!("로컬 주소: {local_addr}");
 
     // 수신 스레드 시작
-    let receiver_thread = thread::spawn(move || {
+    let _receiver_thread = thread::spawn(move || {
         let mut buffer = [0u8; BUFFER_SIZE];
         loop {
             match socket.recv_from(&mut buffer) {
@@ -75,8 +75,48 @@ fn main() -> io::Result<()> {
     let multicast_addr = SocketAddr::new(IpAddr::V4(MULTICAST_ADDR), PORT);
     socket_clone.send_to("hello".as_bytes(), multicast_addr)?;
 
-    // 메인 스레드가 종료되지 않도록 대기
+    // 사용자 입력 처리 루프
+    println!("명령어를 입력하세요 (종료하려면 Ctrl+C):");
+    println!("  /hello - 멀티캐스트 그룹에 'hello' 메시지 전송");
+
+    let mut input = String::new();
     loop {
-        thread::sleep(Duration::from_secs(1));
+        input.clear();
+        print!("> ");
+        io::stdout().flush()?;
+
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => {
+                let command = input.trim();
+
+                match command {
+                    "/hello" => {
+                        println!("멀티캐스트 그룹에 'hello' 메시지 전송");
+                        let multicast_addr = SocketAddr::new(IpAddr::V4(MULTICAST_ADDR), PORT);
+                        match socket_clone.send_to("hello".as_bytes(), multicast_addr) {
+                            Ok(_) => println!("메시지 전송 완료"),
+                            Err(e) => eprintln!("메시지 전송 실패: {e}"),
+                        }
+                    }
+                    "/quit" | "/exit" => {
+                        println!("프로그램을 종료합니다.");
+                        break;
+                    }
+                    "" => continue, // 빈 입력 무시
+                    _ => {
+                        println!("알 수 없는 명령어: {command}");
+                        println!("사용 가능한 명령어:");
+                        println!("  /hello - 멀티캐스트 그룹에 'hello' 메시지 전송");
+                        println!("  /quit  - 프로그램 종료");
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("입력 오류: {e}");
+                break;
+            }
+        }
     }
+
+    Ok(())
 }
