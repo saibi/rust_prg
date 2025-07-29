@@ -264,13 +264,14 @@ pub fn send_multicast_message_with_hmac(
     let signature = hasher.finalize();
 
     // JSON 형태로 메시지와 서명을 직렬화
+    let signature_hex = signature
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect::<String>();
+
     let json_message = format!(
-        r#"{{"message":"{}","signature":"{:?}"}}"#,
-        message,
-        signature
-            .iter()
-            .map(|b| format!("{b:02x}"))
-            .collect::<String>()
+        r#"{{"message":"{}","signature":"{}"}}"#,
+        message, signature_hex
     );
 
     match socket.send_to(json_message.as_bytes(), multicast_addr) {
@@ -316,17 +317,20 @@ pub fn verify_hmac_message(json_data: &str, secret_key: &[u8]) -> Option<String>
     let message_end = json_data[message_start..].find('"').unwrap() + message_start;
     let message = &json_data[message_start..message_end];
 
-    // 서명 추출 (Debug 형식: [1, 2, 3, ...])
+    // 서명 추출 (16진수 문자열 형식)
     let signature_start = json_data.find(r#""signature":"#).unwrap() + 13;
     let signature_end = json_data[signature_start..].find('"').unwrap() + signature_start;
-    let signature_debug = &json_data[signature_start..signature_end];
+    let signature_hex = &json_data[signature_start..signature_end];
 
-    // Debug 형식의 서명을 바이트로 변환
-    let signature_bytes: Vec<u8> = signature_debug
-        .trim_matches('[')
-        .trim_matches(']')
-        .split(',')
-        .map(|s| s.trim().parse::<u8>().unwrap_or(0))
+    // 16진수 문자열을 바이트로 변환
+    let signature_bytes: Vec<u8> = signature_hex
+        .chars()
+        .collect::<Vec<char>>()
+        .chunks(2)
+        .map(|chunk| {
+            let hex_str = chunk.iter().collect::<String>();
+            u8::from_str_radix(&hex_str, 16).unwrap_or(0)
+        })
         .collect();
 
     // HMAC 검증 (키 + 메시지의 SHA256 해시)
@@ -512,7 +516,13 @@ mod tests {
         let signature = hasher.finalize();
 
         // JSON 형태로 직렬화 (실제 함수와 동일한 형식 사용)
-        let json_data = format!(r#"{{"message":"{message}","signature":"{signature:?}"}}"#);
+        let json_data = format!(
+            r#"{{"message":"{message}","signature":"{}"}}"#,
+            signature
+                .iter()
+                .map(|b| format!("{b:02x}"))
+                .collect::<String>()
+        );
 
         // 검증 테스트
         let verified_message = verify_hmac_message(&json_data, secret_key);
