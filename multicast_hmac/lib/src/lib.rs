@@ -269,10 +269,7 @@ pub fn send_multicast_message_with_hmac(
         .map(|b| format!("{b:02x}"))
         .collect::<String>();
 
-    let json_message = format!(
-        r#"{{"message":"{}","signature":"{}"}}"#,
-        message, signature_hex
-    );
+    let json_message = format!(r#"{{"message":"{message}","signature":"{signature_hex}"}}"#);
 
     match socket.send_to(json_message.as_bytes(), multicast_addr) {
         Ok(_) => {
@@ -396,6 +393,7 @@ pub fn start_multicast_receiver_with_hmac(
                         if message == "hello" {
                             println!("Received verified 'hello' message, sending 'ok' response");
                             let response = "ok";
+
                             // 멀티캐스트 그룹에 응답
                             if let Err(e) = socket.send_to(response.as_bytes(), src) {
                                 eprintln!("Failed to send response: {e}");
