@@ -379,7 +379,8 @@ pub fn start_multicast_receiver_with_hmac(
                 Ok((size, src)) => {
                     // 자신이 보낸 메시지는 무시 (IP 주소로 필터링)
                     if src.ip() == local_addr.ip() {
-                        continue;
+                        println!("Received message from myself: {src}");
+                        // continue;
                     }
 
                     let json_data = str::from_utf8(&buffer[..size]).unwrap_or("Invalid UTF-8");

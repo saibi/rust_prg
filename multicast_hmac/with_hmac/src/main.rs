@@ -28,12 +28,12 @@ fn main() -> io::Result<()> {
     let my_ip = get_local_ip_address();
     println!("My IP address: {my_ip}");
 
-    // 자신의 IP 주소 가져오기 (메시지 필터링용)
-    let local_addr = socket.local_addr()?;
-    println!("Local address: {local_addr}");
+    // 자신의 IP 주소를 SocketAddr로 변환 (메시지 필터링용)
+    let my_socket_addr = SocketAddr::new(my_ip, PORT);
+    println!("My socket address: {my_socket_addr}");
 
     // HMAC 수신 스레드 시작
-    let _receiver_thread = start_multicast_receiver_with_hmac(socket, local_addr, secret_key);
+    let _receiver_thread = start_multicast_receiver_with_hmac(socket, my_socket_addr, secret_key);
 
     // 잠시 대기 후 "hello" 메시지 전송 (수신 준비 시간 확보)
     thread::sleep(Duration::from_millis(500));
