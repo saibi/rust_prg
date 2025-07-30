@@ -1,0 +1,10 @@
+[package]
+name = "obfuscation2"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sha2 = "0.10"
+hex = "0.4"
+base64 = "0.21"
+rand = "0.8"

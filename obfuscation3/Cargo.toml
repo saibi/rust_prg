@@ -1,0 +1,10 @@
+[package]
+name = "obfuscation3"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+hex = "0.4"
+aes = "0.8"
+block-modes = "0.9"
+base64 = "0.21"
