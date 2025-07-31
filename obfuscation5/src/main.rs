@@ -112,15 +112,16 @@ impl<const N: usize> ObfuscatedData<N> {
 }
 
 fn main() {
-    const XOR_CONSTANT: [u8; 14] = [
-        155, 152, 153, 158, 159, 156, 157, 146, 147, 203, 200, 201, 206, 207,
+    const XOR_CONSTANT: [u8; 32] = [
+        206, 207, 218, 207, 196, 206, 245, 208, 207, 216, 197, 245, 194, 222, 222, 218, 144, 133,
+        133, 216, 207, 217, 223, 198, 222, 245, 217, 222, 216, 195, 196, 205,
     ];
 
     let obfuscated_api_key = obfuscate!(&XOR_CONSTANT);
 
     let api_key = obfuscated_api_key.reveal();
     println!("len: {}", api_key.len());
-    // api_key.use_secret(|s| {
-    //     println!("value: [{}]", &s);
-    // });
+    api_key.use_secret(|s| {
+        println!("value: [{}]", &s);
+    });
 }
