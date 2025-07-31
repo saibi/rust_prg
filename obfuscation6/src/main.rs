@@ -4,7 +4,8 @@ use zeroize::Zeroize;
 fn xor_again(xor_constant: &[u8]) -> Vec<u8> {
     let mut decoded = vec![0u8; xor_constant.len()];
     (0..xor_constant.len()).for_each(|i| {
-        decoded[i] = xor_constant[i] ^ 0xAA;
+        decoded[i] = xor_constant[i] ^ 0xAA; // strings 로 문자열 검출됨 
+        // decoded.push(xor_constant[i] ^ 0xAA); // 벡터로 하면 문자열로 검출되지 않음
     });
     decoded
 }
